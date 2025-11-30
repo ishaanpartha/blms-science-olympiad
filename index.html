@@ -5,28 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>BLMS Science Olympiad — Home</title>
 
-<!--
-  BLMS Science Olympiad — Liquid Glass Home
-  Requirements from user:
-  - Remove all references to the Tournaments page (nav + card)
-  - Keep only Home, Roster, Attendance Tracker, Attendance Report
-  - Add functionality (animations, keyboard nav, accessibility, active-link highlighting, theme persistence)
-  - NO teacher announcement editor (1 = no)
-  - NO live stats/API fetch widgets (2 = no)
-  - "Liquid glass" (glasmorphism) style with dark/light mode
-
-  Notes:
-  - data-page attributes in nav: index, roster, attendance-tracker, attendance-report
-  - Links: roster.html, attendance-tracker.html, attendance-report.html
-  - This file is intentionally verbose and richly commented for clarity and future edits.
--->
-
 <style>
 /* =============================================================
    THEME VARIABLES & BASE (Liquid Glass / Glassmorphism)
    ============================================================= */
 :root{
-  /* Background: layered gradients for soft, liquid feel */
   --bg-light: radial-gradient(1200px 800px at 10% -10%, #e7eeff, transparent 60%),
               radial-gradient(1400px 900px at 110% 120%, #e9d9ff, transparent 60%),
               linear-gradient(#eef3f9, #fafbff);
@@ -38,18 +21,15 @@
   --text-weak:  #1c1f26cc;
   --text-inv:   #f4f6ff;
 
-  /* Card glass */
   --card:    rgba(255,255,255,.35);
   --card-bd: rgba(255,255,255,.25);
   --shadow:  0 12px 30px rgba(0,0,0,.18);
 
-  /* Accents */
   --brand-1: #007aff;
   --brand-2: #9b7bff;
   --glow-1:  rgba(0,122,255,.35);
 }
 
-/* Dark theme overrides via data-theme */
 html[data-theme="dark"]{
   --text:      #f4f6ff;
   --text-weak: #cfd5ffcc;
@@ -57,7 +37,6 @@ html[data-theme="dark"]{
   --card-bd:   rgba(255,255,255,.18);
 }
 
-/* Global reset & base */
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%}
 body{
@@ -70,18 +49,15 @@ body{
 }
 html[data-theme="dark"] body{ background:var(--bg-dark); }
 
-/* Focus visible for keyboard users */
 :focus-visible{ outline:2px solid var(--brand-1); outline-offset:2px; border-radius:8px; }
 
-/* =============================================================
-   NAV BAR (Glassy pill with blur + active highlight)
-   ============================================================= */
+/* NAV */
 .nav{
   position:fixed; top:18px; left:20px; z-index:20;
   display:flex; gap:14px; flex-wrap:wrap; align-items:center;
   padding:10px 16px;
   background: rgba(255,255,255,.25);
-  backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
   border-radius: 999px; border:1px solid rgba(255,255,255,.3);
   box-shadow: 0 6px 24px rgba(0,0,0,.08);
 }
@@ -91,8 +67,8 @@ html[data-theme="dark"] .nav{
 }
 .nav a{
   color:var(--text); text-decoration:none; font-weight:700; font-size:.96rem;
-  padding:8px 12px; border-radius:999px; position:relative;
-  transition: color .2s ease, transform .2s ease, background .2s ease;
+  padding:8px 12px; border-radius:999px;
+  transition: color .2s ease, transform .2s ease;
 }
 .nav a:hover{ color:var(--brand-1); transform: translateY(-1px); }
 .nav a.active{
@@ -100,217 +76,115 @@ html[data-theme="dark"] .nav{
   -webkit-background-clip: text; -webkit-text-fill-color: transparent;
 }
 
-/* Theme toggle pill */
+/* Theme toggle */
 .toggle{
   position:fixed; top:18px; right:20px; z-index:20;
-  display:flex; gap:8px; align-items:center;
   padding:8px 14px; border-radius:999px;
   border:1px solid var(--card-bd);
   background: rgba(255,255,255,.25);
   backdrop-filter: blur(14px);
-  cursor:pointer; color:var(--text);
+  cursor:pointer;
 }
 
-/* =============================================================
-   HERO (Large title + tagline)
-   ============================================================= */
+/* Header */
 header{ text-align:center; padding: 96px 20px 40px; width:100%; }
 h1{
   font-size: clamp(2.2rem, 5vw, 3.2rem);
   font-weight:800;
-  line-height:1.12;
   background: linear-gradient(90deg, var(--brand-1), var(--brand-2));
   -webkit-background-clip: text; -webkit-text-fill-color: transparent;
 }
 .tag{ opacity:.85; margin-top:10px; font-size:1.12rem; }
 
-/* Subtle animated blobs for liquid look */
+/* Liquid blobs */
 .blob{ position:absolute; border-radius:50%; filter: blur(32px); opacity:.35; pointer-events:none; }
-.blob.blue{ background: #6fb4ff; width:320px; height:320px; top: -60px; left: 40px; animation: float1 12s ease-in-out infinite alternate; }
-.blob.purple{ background:#bda2ff; width:420px; height:420px; bottom: -80px; right: -40px; animation: float2 14s ease-in-out infinite alternate; }
-@keyframes float1{ from{ transform: translate(0,0)} to{ transform: translate(12px,18px)} }
-@keyframes float2{ from{ transform: translate(0,0)} to{ transform: translate(-16px,-10px)} }
+.blob.blue{ background: #6fb4ff; width:320px; height:320px; top: -60px; left: 40px; }
+.blob.purple{ background:#bda2ff; width:420px; height:420px; bottom: -80px; right: -40px; }
 
-/* =============================================================
-   CARDS GRID (Three liquid-glass tiles)
-   ============================================================= */
+/* Cards */
 main{
   display:grid; grid-template-columns: repeat(auto-fit, minmax(260px,1fr));
   gap: 24px; width: min(1040px, 92%); margin: 0 auto 64px;
 }
 .card{
-  position:relative; overflow:hidden;
-  background: var(--card); border:1px solid var(--card-bd);
-  border-radius: 18px; box-shadow: var(--shadow);
+  background: var(--card);
+  border:1px solid var(--card-bd);
+  border-radius: 18px;
+  box-shadow: var(--shadow);
   backdrop-filter: blur(18px) saturate(150%);
   padding: 28px 20px; text-align:center;
-  transition: transform .28s ease, box-shadow .28s ease, border-color .28s ease;
+  transition: transform .28s ease;
 }
-.card:hover{ transform: translateY(-6px); box-shadow: 0 16px 32px rgba(0,0,0,.18); }
-.card h2{
-  background: linear-gradient(90deg, var(--brand-1), var(--brand-2));
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-  font-weight: 800; font-size: 1.4rem; margin-bottom:8px;
-}
-.card p{ font-size:.96rem; opacity:.9; margin-bottom:16px; }
-.card a{
-  display:inline-block; padding:10px 16px; border-radius:10px; font-weight:800;
-  color:#fff; text-decoration:none; letter-spacing:.2px;
-  background: linear-gradient(90deg, var(--brand-1), var(--brand-2));
-  box-shadow: 0 6px 14px var(--glow-1);
-  transition: transform .2s ease;
-}
-.card a:hover{ transform: scale(1.05); }
+.card:hover{ transform: translateY(-6px); }
 
-/* Decorative highlight ring on hover */
-.card::after{
-  content:""; position:absolute; inset:-2px; border-radius:20px; pointer-events:none;
-  background: radial-gradient(120px 80px at var(--mx,50%) var(--my,50%), rgba(255,255,255,.28), transparent 60%);
-  opacity:0; transition: opacity .25s ease;
-}
-.card:hover::after{ opacity:1; }
-
-/* =============================================================
-   FOOTER
-   ============================================================= */
+/* Footer */
 footer{ text-align:center; font-size:.9rem; color:var(--text-weak); margin: 20px 0 24px; }
-
-/* Utility classes */
-.hidden{ display:none !important; }
 
 </style>
 </head>
 <body>
 
-<!-- Liquid blobs -->
-<div class="blob blue" aria-hidden="true"></div>
-<div class="blob purple" aria-hidden="true"></div>
+<div class="blob blue"></div>
+<div class="blob purple"></div>
 
-<!-- NAV (no Tournaments link) -->
-<nav class="nav" aria-label="Primary">
-  <a href="index.html"              data-page="index"               aria-current="page">🏠 Home</a>
-  <a href="roster.html"             data-page="roster">👥 Team Roster</a>
+<nav class="nav">
+  <a href="index.html" data-page="index">🏠 Home</a>
+  <a href="roster.html" data-page="roster">👥 Team Roster</a>
   <a href="attendance-tracker.html" data-page="attendance-tracker">🗓️ Attendance Tracker</a>
-  <a href="attendance-report.html"  data-page="attendance-report">📊 Attendance Report</a>
+  <a href="attendance-report.html" data-page="attendance-report">📊 Attendance Report</a>
 </nav>
 
-<!-- Theme toggle -->
-<button class="toggle" id="modeToggle" type="button" aria-pressed="false" aria-label="Toggle dark mode">
-  ☀️ Light / 🌙 Dark
-</button>
+<button class="toggle" id="modeToggle">☀️ Light / 🌙 Dark</button>
 
 <header>
   <h1>BLMS Science Olympiad</h1>
   <p class="tag">Empowering Science, Teamwork & Discovery — 2025–26 Season</p>
 </header>
 
+<!-- ⭐ NEW ANNOUNCEMENTS CARD ⭐ -->
+<section id="annBox" style="
+  width:min(720px, 92%);
+  margin: 0 auto 40px;
+  padding: 22px 28px;
+  background: var(--card);
+  backdrop-filter: blur(14px);
+  border-radius: 16px;
+  border: 1px solid var(--card-bd);
+  box-shadow: var(--shadow);
+">
+  <h2 style="
+    margin-bottom:16px;
+    background: linear-gradient(90deg, var(--brand-1), var(--brand-2));
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+    font-weight:800; font-size:1.4rem;
+  ">📢 Announcements</h2>
+
+  <div id="announcements" style="font-size:1rem;"></div>
+</section>
+
 <main id="tiles">
   <article class="card" data-link="roster.html">
     <h2>👥 Team Roster</h2>
     <p>View all Science Olympiad team members and their assigned events.</p>
-    <a href="roster.html" data-link>View Roster</a>
+    <a href="roster.html">View Roster</a>
   </article>
 
   <article class="card" data-link="attendance-tracker.html">
     <h2>🗓️ Attendance Tracker</h2>
     <p>Mark weekly attendance for all Science Olympiad practices.</p>
-    <a href="attendance-tracker.html" data-link>Open Tracker</a>
+    <a href="attendance-tracker.html">Open Tracker</a>
   </article>
 
   <article class="card" data-link="attendance-report.html">
     <h2>📊 Attendance Report</h2>
     <p>See who attended practices and track participation trends.</p>
-    <a href="attendance-report.html" data-link>View Report</a>
+    <a href="attendance-report.html">View Report</a>
   </article>
 </main>
 
 <footer>© 2025 BLMS Science Olympiad · Designed with 💡 and teamwork</footer>
 
-<script>
-// =============================================================
-// Active nav highlight & accessibility helpers
-// =============================================================
-(function(){
-  const current = location.pathname.split('/').pop().replace('.html','') || 'index';
-  document.querySelectorAll('.nav a').forEach(a=>{
-    const page = a.getAttribute('data-page');
-    if(page === current){ a.classList.add('active'); a.setAttribute('aria-current','page'); }
-  });
-})();
-
-// =============================================================
-// Dark/Light theme toggle with persistence
-// =============================================================
-(function(){
-  const btn = document.getElementById('modeToggle');
-  const lsKey = 'blms_theme';
-  const saved = localStorage.getItem(lsKey);
-  if(saved === 'dark') document.documentElement.setAttribute('data-theme','dark');
-
-  function syncAria(){ btn.setAttribute('aria-pressed', document.documentElement.getAttribute('data-theme') === 'dark'); }
-  syncAria();
-
-  btn.addEventListener('click', ()=>{
-    const dark = document.documentElement.getAttribute('data-theme') === 'dark';
-    document.documentElement.setAttribute('data-theme', dark ? 'light':'dark');
-    localStorage.setItem(lsKey, dark ? 'light':'dark');
-    syncAria();
-  });
-})();
-
-// =============================================================
-// "Liquid" hover light following the cursor on cards
-// =============================================================
-(function(){
-  const cards = document.querySelectorAll('.card');
-  cards.forEach(card=>{
-    card.addEventListener('pointermove', (e)=>{
-      const rect = card.getBoundingClientRect();
-      card.style.setProperty('--mx', (e.clientX - rect.left) + 'px');
-      card.style.setProperty('--my', (e.clientY - rect.top) + 'px');
-    });
-    // Make entire card clickable via data-link
-    card.addEventListener('click', (e)=>{
-      const direct = e.target.closest('[data-link]');
-      const href = direct?.getAttribute('href') || card.getAttribute('data-link');
-      if(href){ window.location.href = href; }
-    });
-  });
-})();
-
-// =============================================================
-// Keyboard navigation shortcuts (accessible)
-//   g h  -> Home
-//   g r  -> Roster
-//   g t  -> Attendance Tracker
-//   g p  -> Attendance Report (p for "report")
-//   d    -> Toggle theme
-// =============================================================
-(function(){
-  let leader=false, leaderTimer=null;
-  function setLeader(){
-    leader = true;
-    clearTimeout(leaderTimer);
-    leaderTimer = setTimeout(()=> leader=false, 1400);
-  }
-  document.addEventListener('keydown', (e)=>{
-    if(e.key === 'g'){ setLeader(); return; }
-    if(e.key === 'd'){ document.getElementById('modeToggle').click(); return; }
-    if(!leader) return;
-    if(e.key === 'h'){ window.location.href = 'index.html'; }
-    if(e.key === 'r'){ window.location.href = 'roster.html'; }
-    if(e.key === 't'){ window.location.href = 'attendance-tracker.html'; }
-    if(e.key === 'p'){ window.location.href = 'attendance-report.html'; }
-  });
-})();
-
-// =============================================================
-// Progressive enhancement: if JS disabled, links still work.
-// This block ensures cards remain accessible.
-// =============================================================
-(function(){
-  // Nothing required here beyond the anchor tags; kept for future hooks.
-})();
-</script>
+<script src="script.js"></script>
 </body>
 </html>
+
