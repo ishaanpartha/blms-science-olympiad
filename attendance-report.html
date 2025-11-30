@@ -126,4 +126,178 @@ footer { text-align:center; margin-top:20px; color:#777; padding-bottom:20px; }
 
 <body>
 
-<
+<!-- NAV -->
+<nav class="nav">
+  <a href="index.html" data-page="index">🏠 Home</a>
+  <a href="roster.html" data-page="roster">👥 Team Roster</a>
+  <a href="attendance-tracker.html" data-page="attendance-tracker">🗓️ Attendance Tracker</a>
+  <a href="attendance-report.html" data-page="attendance-report">📊 Attendance Report</a>
+</nav>
+
+<header>
+  <h1>BLMS Science Olympiad — Attendance Report</h1>
+</header>
+
+<main>
+  <div class="filter-bar">
+    <input type="text" id="search" placeholder="Search name, date, or status">
+    <button onclick="loadData()">🔄 Refresh</button>
+  </div>
+
+  <div class="summary" id="summary">Loading attendance...</div>
+
+  <div id="recordsContainer"></div>
+
+  <div class="no-data" id="noData" style="display:none;">
+    No matching records found.
+  </div>
+</main>
+
+<footer>© 2025 BLMS Science Olympiad Attendance Tracker</footer>
+
+<script>
+/* Highlight nav */
+const currentFile = location.pathname.split('/').pop().replace('.html','');
+document.querySelectorAll(".nav a")
+  .forEach(a => { if(a.dataset.page===currentFile) a.classList.add("active"); });
+
+const SCRIPT_URL =
+  "https://script.google.com/macros/s/AKfycbyoBlmpsgE_IhSnuH5ao9LgNzOtwkmqnbupyFno04QUN01Pcuk30eX09xIs1GlklTDi/exec";
+
+async function loadData() {
+  const searchVal = document.getElementById("search").value.toLowerCase();
+  const summaryEl = document.getElementById("summary");
+  const container = document.getElementById("recordsContainer");
+  const noData = document.getElementById("noData");
+
+  summaryEl.textContent = "Loading...";
+  container.innerHTML = "";
+  noData.style.display = "none";
+
+  try {
+    let res = await fetch(SCRIPT_URL);
+    let data = await res.json();
+
+    /* Group by date */
+    let byDate = {};
+
+    data.forEach(r => {
+      if (!byDate[r.date]) byDate[r.date] = [];
+      byDate[r.date].push(r);
+    });
+
+    /* Filter search */
+    if (searchVal) {
+      Object.keys(byDate).forEach(date => {
+        byDate[date] = byDate[date].filter(r =>
+          r.name?.toLowerCase().includes(searchVal) ||
+          r.date?.toLowerCase().includes(searchVal) ||
+          r.status?.toLowerCase().includes(searchVal) ||
+          (searchVal === "excused" && r.status === "EXCUSED_DAY")
+        );
+      });
+    }
+
+    /* Attendance summary counts */
+    let counts = {P:0, A:0, E:0};
+
+    /* For irregular alerts: counts and streaks */
+    let historyByName = {};
+    data.forEach(r => {
+      if (r.status === "EXCUSED_DAY") return;
+      if (!historyByName[r.name]) historyByName[r.name] = [];
+      historyByName[r.name].push(r.status);
+    });
+
+    /* Render grouped tables */
+    let anyRows = false;
+
+    Object.keys(byDate).sort().forEach(date => {
+      let rows = byDate[date];
+      if (rows.length === 0) return;
+
+      anyRows = true;
+
+      /* Check excused-day */
+      let excusedDay = rows.some(r => r.status === "EXCUSED_DAY");
+
+      let section = document.createElement("div");
+
+      /* Date header */
+      section.innerHTML += `<div class="date-header">${date}</div>`;
+
+      /* Excused banner */
+      if (excusedDay) {
+        section.innerHTML += `
+          <div class="excused-banner">
+            All Students Excused — No attendance required this day.
+          </div>`;
+      }
+
+      /* Table */
+      let tbl = `
+      <table>
+        <thead>
+          <tr>
+            <th>Timestamp</th>
+            <th>Name</th>
+            <th>Status</th>
+            <th>Alerts</th>
+          </tr>
+        </thead>
+        <tbody>
+      `;
+
+      rows.forEach(r => {
+        if (r.status === "EXCUSED_DAY") return;
+
+        let alert = "";
+        let history = historyByName[r.name] || [];
+
+        let totalA = history.filter(s=>s==="A").length;
+
+        /* Absence streak */
+        let streak = 0;
+        for (let i=history.length-1; i>=0; i--) {
+          if (history[i] === "A") streak++;
+          else break;
+        }
+
+        if (totalA >= 5) alert = `<span class="alert-red">🚨 5+ Absences</span>`;
+        else if (streak >= 3) alert = `<span class="alert-yellow">⚠️ 3 Absences in a Row</span>`;
+
+        if (r.status === "P") counts.P++;
+        if (r.status === "A") counts.A++;
+        if (r.status === "E") counts.E++;
+
+        tbl += `
+          <tr>
+            <td>${r.timestamp}</td>
+            <td>${r.name}</td>
+            <td class="status ${r.status}">${r.status}</td>
+            <td>${alert}</td>
+          </tr>
+        `;
+      });
+
+      tbl += `</tbody></table>`;
+      section.innerHTML += tbl;
+      container.appendChild(section);
+    });
+
+    if (!anyRows) noData.style.display="block";
+
+    summaryEl.textContent =
+      `Present: ${counts.P} | Absent: ${counts.A} | Excused: ${counts.E}`;
+
+  } catch(err) {
+    summaryEl.textContent = "Error loading data";
+    console.error(err);
+  }
+}
+
+loadData();
+</script>
+</body>
+</html>
+
