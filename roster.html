@@ -4,43 +4,40 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>BLMS Science Olympiad — Team Roster</title>
+
 <style>
 :root {
   --bg-light: radial-gradient(1200px 800px at 10% -10%, #e7eeff, transparent 60%),
               radial-gradient(1400px 900px at 110% 120%, #e9d9ff, transparent 60%),
               linear-gradient(#eef3f9,#fafbff);
-  --bg-dark: radial-gradient(1200px 800px at 15% -10%, #0f1320, transparent 60%),
-             radial-gradient(1400px 900px at 110% 120%, #1a1227, transparent 60%),
-             linear-gradient(#0b0d12,#141720);
+
   --text:#111318;
   --text-weak:#1c1f26cc;
+
   --card:rgba(255,255,255,.35);
   --card-bd:rgba(255,255,255,.25);
   --shadow:rgba(0,0,0,.18);
 }
-[data-theme="dark"]{
-  --text:#f4f6ff;
-  --text-weak:#cfd5ffcc;
-  --card:rgba(36,38,46,.55);
-  --card-bd:rgba(255,255,255,.18);
-  --shadow:rgba(0,0,0,.6);
-}
+
 *{box-sizing:border-box;margin:0;padding:0;}
 body{
   font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,Arial,sans-serif;
-  background:var(--bg-light);color:var(--text);
-  min-height:100vh;overflow-x:hidden;transition:background .4s,color .4s;
+  background:var(--bg-light);
+  color:var(--text);
+  min-height:100vh;
+  overflow-x:hidden;
 }
-[data-theme="dark"] body{background:var(--bg-dark);}
 
 /* NAV BAR */
 .nav{
-  position:fixed;top:18px;left:20px;z-index:10;display:flex;gap:14px;
-  padding:10px 16px;background:rgba(255,255,255,0.25);
-  backdrop-filter:blur(14px);border-radius:999px;
+  position:fixed;top:18px;left:20px;z-index:10;
+  display:flex;gap:14px;
+  padding:10px 16px;
+  background:rgba(255,255,255,0.25);
+  backdrop-filter:blur(14px);
+  border-radius:999px;
   border:1px solid rgba(255,255,255,0.3);
 }
-[data-theme="dark"] .nav{background:rgba(36,38,46,.5);}
 .nav a{
   position:relative;
   color:var(--text);
@@ -48,7 +45,6 @@ body{
   font-weight:600;
   font-size:.95rem;
   transition:color 0.2s ease, transform 0.2s ease;
-  background:none;
 }
 .nav a:hover{
   color:#007aff;
@@ -59,33 +55,7 @@ body{
   background:linear-gradient(90deg,#007aff,#9b7bff);
   -webkit-background-clip:text;
   -webkit-text-fill-color:transparent;
-  background-clip:text;
-  color:transparent;
   font-weight:800;
-  text-shadow:0 0 10px rgba(155,123,255,0.3);
-}
-.nav a.active::after{
-  content:"";
-  position:absolute;
-  bottom:-3px;
-  left:0;
-  width:100%;
-  height:2px;
-  background:linear-gradient(90deg,#007aff,#9b7bff);
-  border-radius:2px;
-  opacity:0.8;
-  animation:glowline 1.8s ease-in-out infinite alternate;
-}
-@keyframes glowline{
-  from{opacity:0.3;}
-  to{opacity:1;}
-}
-
-.toggle{
-  position:fixed;top:18px;right:20px;z-index:10;
-  padding:8px 16px;border-radius:999px;border:1px solid var(--card-bd);
-  background:rgba(255,255,255,.25);backdrop-filter:blur(14px);
-  cursor:pointer;color:var(--text);
 }
 
 /* HEADER */
@@ -100,54 +70,87 @@ h1{
 /* FILTER */
 .filter-bar{text-align:center;margin:20px 0 10px;}
 .filter-bar select{
-  padding:10px 16px;border-radius:10px;border:1px solid var(--card-bd);
-  background:rgba(255,255,255,0.7);font-size:1rem;cursor:pointer;
-}
-[data-theme="dark"] .filter-bar select{
-  background:rgba(36,38,46,0.7);color:var(--text);
+  padding:10px 16px;border-radius:10px;
+  border:1px solid var(--card-bd);
+  background:rgba(255,255,255,0.7);
+  font-size:1rem;cursor:pointer;
 }
 
 /* GRID */
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
-  gap:32px;max-width:1200px;padding:32px 20px 100px;margin:0 auto;}
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:32px;
+  max-width:1200px;
+  padding:32px 20px 100px;
+  margin:0 auto;
+}
 .flip-card{perspective:1000px;height:240px;}
-.flip-inner{position:relative;width:100%;height:100%;transform-style:preserve-3d;
-  transition:transform .8s cubic-bezier(.2,.65,.2,1);}
-.flip-card:hover .flip-inner,.flip-card.flipped .flip-inner{transform:rotateY(180deg);}
+.flip-inner{
+  position:relative;width:100%;height:100%;
+  transform-style:preserve-3d;
+  transition:transform .8s cubic-bezier(.2,.65,.2,1);
+}
+.flip-card:hover .flip-inner,
+.flip-card.flipped .flip-inner{
+  transform:rotateY(180deg);
+}
 .face{
-  position:absolute;inset:0;border-radius:22px;background:var(--card);
-  border:1px solid var(--card-bd);backdrop-filter:blur(30px) saturate(180%);
-  box-shadow:0 14px 30px var(--shadow);display:flex;flex-direction:column;
-  align-items:center;justify-content:center;backface-visibility:hidden;padding:20px;
+  position:absolute;inset:0;border-radius:22px;
+  background:var(--card);
+  border:1px solid var(--card-bd);
+  backdrop-filter:blur(30px) saturate(180%);
+  box-shadow:0 14px 30px var(--shadow);
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  backface-visibility:hidden;padding:20px;
 }
 .front h3{
-  font-weight:800;font-size:1.4rem;line-height:1.2;text-align:center;
-  word-wrap:break-word;overflow-wrap:break-word;max-width:90%;
+  font-weight:800;font-size:1.4rem;line-height:1.2;
+  text-align:center;max-width:90%;
 }
-.back{transform:rotateY(180deg);padding:22px;text-align:left;overflow:auto;}
+.back{
+  transform:rotateY(180deg);
+  padding:22px;text-align:left;overflow:auto;
+}
 .back ul{list-style:none;padding-left:0;}
 .back li{margin:4px 0;font-size:1rem;color:var(--text-weak);}
-.edit-btn{margin-top:10px;padding:6px 12px;border:none;border-radius:8px;
-  background:linear-gradient(90deg,#007aff,#9b7bff);color:#fff;font-weight:600;cursor:pointer;display:none;}
-.teacher .edit-btn{display:inline-block;}
-.delete-btn{display:none;margin-top:6px;padding:5px 10px;background:#ef4444;border:none;color:white;border-radius:8px;cursor:pointer;}
+
+.edit-btn, .delete-btn{
+  display:none;
+  margin-top:10px;
+  padding:6px 12px;
+  border:none;border-radius:8px;
+  font-weight:600;cursor:pointer;
+}
+.edit-btn{background:linear-gradient(90deg,#007aff,#9b7bff);color:white;}
+.delete-btn{background:#ef4444;color:white;}
+
+.teacher .edit-btn,
 .teacher .delete-btn{display:inline-block;}
 
 /* LOGIN PANEL */
-#loginPanel{position:fixed;bottom:20px;right:20px;z-index:10;}
+#loginPanel{
+  position:fixed;bottom:20px;right:20px;z-index:10;
+}
 #loginPanel input{padding:6px 8px;border-radius:6px;border:1px solid #ccc;}
-#loginPanel button{padding:6px 10px;border:none;border-radius:6px;
-  background:#007aff;color:white;cursor:pointer;margin-left:6px;}
+#loginPanel button{
+  padding:6px 10px;border:none;border-radius:6px;
+  background:#007aff;color:white;cursor:pointer;margin-left:6px;
+}
 
-/* TEACHER BAR */
-#teacherTools{text-align:center;margin:20px;}
+/* TEACHER TOOLBAR */
+#teacherTools{
+  text-align:center;margin:20px;
+}
 #teacherTools button{
-  padding:10px 14px;border:none;border-radius:8px;color:#fff;font-weight:600;margin:0 5px;cursor:pointer;
+  padding:10px 14px;border:none;border-radius:8px;
+  color:#fff;font-weight:600;cursor:pointer;
 }
 #addBtn{background:#10b981;}
-#deleteBtn{background:#ef4444;}
 </style>
 </head>
+
 <body>
 
 <nav class="nav">
@@ -157,33 +160,31 @@ h1{
   <a href="attendance-report.html" data-page="attendance-report">📊 Attendance Report</a>
 </nav>
 
-<button class="toggle" id="modeToggle">☀️ Light / 🌙 Dark</button>
-
 <header>
   <h1>Team Roster</h1>
   <p class="tag">Flip cards to view events · Teachers can log in to edit</p>
 </header>
 
 <div class="filter-bar">
-  <select id="eventFilter"><option value="All">All Events</option></select>
+  <select id="eventFilter">
+    <option value="All">All Events</option>
+  </select>
 </div>
 
 <main class="grid" id="grid"></main>
 
+<!-- Teacher login -->
 <div id="loginPanel">
   <input type="password" id="pw" placeholder="Teacher password">
   <button id="loginBtn">Login</button>
 </div>
 
 <script>
-/* Theme toggle */
-document.getElementById("modeToggle").onclick=()=>{const h=document.documentElement;
-  h.dataset.theme=h.dataset.theme==="dark"?"light":"dark";};
-
-/* Nav highlight */
+/* Highlight current nav */
 const cur=location.pathname.split("/").pop().replace(".html","");
 document.querySelectorAll(".nav a").forEach(a=>{
-  if(a.dataset.page===cur||(cur===""&&a.dataset.page==="index"))a.classList.add("active");
+  if(a.dataset.page===cur||(cur===""&&a.dataset.page==="index"))
+    a.classList.add("active");
 });
 
 /* Login */
@@ -195,14 +196,15 @@ document.getElementById("loginBtn").onclick=()=>{
     document.body.classList.add("teacher");
     showTeacherToolbar();
     alert("✅ Teacher mode enabled");
-  }else alert("Incorrect password");
+  }else alert("❌ Incorrect password");
 };
+
 if(sessionStorage.getItem("teacherMode")==="1"){
   document.body.classList.add("teacher");
   showTeacherToolbar();
 }
 
-/* Full student data */
+/* STUDENT DATA */
 let students=[
 {name:"Aarav Mandhar",events:["Rocks and Minerals","Codebusters","Boomilever"]},
 {name:"Aarav Singhai",events:["Disease Detectives","Mission Possible","Crime Busters"]},
@@ -214,6 +216,7 @@ let students=[
 {name:"Dhruv Bajaj",events:["Experimental Design","Crime Busters","Circuit Lab"]},
 {name:"Edmund Bao",events:["Boomilever","Helicopter","Scrambler","Potions and Poisons","Hovercraft","Crime Busters","Disease Detectives","Heredity","Codebusters"]},
 {name:"Haasini Bharathwaj",events:["Dynamic Planet","Write It Do It","Solar System"]},
+{name:"Ishaan Parthasarathy",events:["Anatomy and Physiology","Heredity","Metric Mastery","Write It Do It"]},
 {name:"Ishani Bhat",events:["Disease Detectives","Heredity","Rocks and Minerals","Potions and Poisons"]},
 {name:"Jayden Oh",events:["Boomilever","Hovercraft","Helicopter","Mission Possible"]},
 {name:"Joann Antony",events:["Disease Detectives","Scrambler","Boomilever"]},
@@ -234,87 +237,102 @@ let students=[
 {name:"Zayna Rasheed",events:["Water Quality","Heredity","Rocks and Minerals","Potions and Poisons"]}
 ];
 
-/* Build cards */
+/* Build card UI */
 const grid=document.getElementById("grid");
+
 function build(list){
   grid.innerHTML="";
   list.forEach((s,i)=>{
-    const c=document.createElement("div");
-    c.className="flip-card";
+    const card=document.createElement("div");
+    card.className="flip-card";
+
     const inner=document.createElement("div");
     inner.className="flip-inner";
-    const f=document.createElement("div");
-    f.className="face front";
-    f.innerHTML=`<h3>${s.name}</h3>`;
-    const b=document.createElement("div");
-    b.className="face back";
-    b.innerHTML=`<ul>${s.events.map(e=>`<li>${e}</li>`).join("")}</ul>
-      <button class='edit-btn'>✏️ Edit</button>
-      <button class='delete-btn'>🗑️ Delete</button>`;
-    inner.append(f,b); c.append(inner); grid.append(c);
 
-    b.querySelector(".edit-btn").onclick=e=>{e.stopPropagation();edit(i);};
-    b.querySelector(".delete-btn").onclick=e=>{e.stopPropagation();deleteStudent(i);};
-    c.onclick=()=>c.classList.toggle("flipped");
+    const front=document.createElement("div");
+    front.className="face front";
+    front.innerHTML=`<h3>${s.name}</h3>`;
+
+    const back=document.createElement("div");
+    back.className="face back";
+    back.innerHTML=`
+      <ul>${s.events.map(e=>`<li>${e}</li>`).join("")}</ul>
+      <button class="edit-btn">✏️ Edit</button>
+      <button class="delete-btn">🗑️ Delete</button>
+    `;
+
+    inner.append(front,back);
+    card.append(inner);
+    grid.append(card);
+
+    card.onclick=()=>card.classList.toggle("flipped");
+
+    back.querySelector(".edit-btn").onclick=(e)=>{e.stopPropagation();edit(i);};
+    back.querySelector(".delete-btn").onclick=(e)=>{e.stopPropagation();removeStudent(i);};
   });
 }
 
 /* Edit */
 function edit(i){
   const s=students[i];
-  const n=prompt("Edit name:",s.name);
-  if(!n)return;
+  const name=prompt("Edit name:",s.name);
+  if(!name)return;
+
   const ev=prompt("Edit events (; separated):",s.events.join("; "));
-  students[i]={name:n.trim(),events:ev.split(/;|,/).map(x=>x.trim()).filter(Boolean)};
+  students[i]={name:name.trim(),events:ev.split(/;|,/).map(x=>x.trim()).filter(Boolean)};
   populate();build(students);
 }
 
-/* Add/Delete */
-function addStudent(){
-  const n=prompt("Enter new student name:");
-  if(!n)return;
-  const ev=prompt("Enter events (; separated):","");
-  students.push({name:n.trim(),events:ev.split(/;|,/).map(x=>x.trim()).filter(Boolean)});
-  populate();build(students);
-}
-function deleteStudent(i){
+/* Remove */
+function removeStudent(i){
   if(confirm(`Delete ${students[i].name}?`)){
     students.splice(i,1);
     populate();build(students);
   }
 }
 
+/* Add new student */
+function addStudent(){
+  const name=prompt("Student name:");
+  if(!name)return;
+
+  const ev=prompt("Events (; separated):","");
+  students.push({name:name.trim(),events:ev.split(/;|,/).map(x=>x.trim()).filter(Boolean)});
+  populate();build(students);
+}
+
 /* Teacher toolbar */
 function showTeacherToolbar(){
   if(document.getElementById("teacherTools")) return;
+
   const bar=document.createElement("div");
   bar.id="teacherTools";
-  bar.innerHTML=`
-    <button id="addBtn">➕ Add Student</button>
-  `;
+  bar.innerHTML=`<button id="addBtn">➕ Add Student</button>`;
   document.querySelector("header").after(bar);
   document.getElementById("addBtn").onclick=addStudent;
 }
 
-/* Filter */
+/* Filter dropdown */
 function populate(){
   const sel=document.getElementById("eventFilter");
-  const evs=[...new Set(students.flatMap(s=>s.events))].sort();
+  const events=[...new Set(students.flatMap(s=>s.events))].sort();
   sel.innerHTML="<option value='All'>All Events</option>";
-  evs.forEach(e=>{
-    const o=document.createElement("option");o.value=e;o.textContent=e;
+  events.forEach(e=>{
+    const o=document.createElement("option");
+    o.value=e;o.textContent=e;
     sel.append(o);
   });
 }
+
 document.getElementById("eventFilter").onchange=e=>{
   const v=e.target.value;
-  if(v==="All")build(students);
+  if(v==="All") build(students);
   else build(students.filter(s=>s.events.includes(v)));
 };
 
-/* Initial */
-populate();build(students);
+/* Init */
+populate();
+build(students);
 </script>
 </body>
 </html>
-
