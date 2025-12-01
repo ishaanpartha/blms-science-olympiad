@@ -30,12 +30,15 @@ body {
   border: 1px solid rgba(255,255,255,0.3);
 }
 .nav a {
-  font-weight: 600; font-size: .95rem;
-  color: #111; text-decoration:none;
+  font-weight: 600; 
+  font-size: .95rem;
+  color: #111; 
+  text-decoration:none;
 }
 .nav a.active {
   background: linear-gradient(90deg,#007aff,#9b7bff);
-  -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+  -webkit-background-clip:text; 
+  -webkit-text-fill-color:transparent;
   font-weight: 800;
 }
 
@@ -154,230 +157,142 @@ footer { text-align:center; margin-top:20px; color:#777; padding-bottom:20px; }
 </main>
 
 <footer>© 2025 BLMS Science Olympiad Attendance Tracker</footer>
+
 <script>
-/* CONFIG */
+/* Highlight nav */
+const currentFile = location.pathname.split('/').pop().replace('.html','');
+document.querySelectorAll(".nav a")
+  .forEach(a => { if(a.dataset.page===currentFile) a.classList.add("active"); });
+
 const SCRIPT_URL =
   "https://script.google.com/macros/s/AKfycbyoBlmpsgE_IhSnuH5ao9LgNzOtwkmqnbupyFno04QUN01Pcuk30eX09xIs1GlklTDi/exec";
 
-const TEACHER_PASSWORD = "Science123";
+async function loadData() {
+  const searchVal = document.getElementById("search").value.toLowerCase();
+  const summaryEl = document.getElementById("summary");
+  const container = document.getElementById("recordsContainer");
+  const noData = document.getElementById("noData");
 
-const students = [
-  "Aarav Singh Mandhar","Shreya Ayyalasomayajula","Yvaine Wang","Junye Huang",
-  "Sanvi Byreddy","Vinay Patel","Saanvika Nair","Ryan Thomas","Anay Chatterjee",
-  "Dhruv Bajaj","Sofia Shao","Akshay Bhargav Varanasi","Edmund Bao","Pavel Chudnovskiy",
-  "Anvika Rath","Jayden Oh","William Wang","Akhil Gollapally","Joann Antony",
-  "Nora Ahmed","Haasini Bharathwaj","Anvi Dhome","Krishvee Anand","Rayansh Anand",
-  "Pavaki Rastogi","Samira Senthil","Ishani Bhat","Zayna Rasheed",
-  "Ishaan Parthasarathy","Aarav Singhai"
-];
+  summaryEl.textContent = "Loading...";
+  container.innerHTML = "";
+  noData.style.display = "none";
 
-/* ============================
-      LOGIN
-============================ */
-loginBtn.onclick = () => {
-  if (pw.value === TEACHER_PASSWORD) {
-    sessionStorage.setItem("att_ok", "1");
-    loginOverlay.style.display = "none";
-    app.style.display = "block";
-  } else {
-    loginErr.textContent = "Incorrect password.";
-  }
-};
-if (sessionStorage.getItem("att_ok") === "1") {
-  loginOverlay.style.display="none";
-  app.style.display="block";
-}
+  try {
+    let res = await fetch(SCRIPT_URL);
+    let data = await res.json();
 
-/* ============================
-   RENDER STUDENTS
-============================ */
-function renderList() {
-  list.innerHTML = "";
-  students.forEach(name => {
-    let row = document.createElement("div");
-    row.className = "card";
-    row.dataset.name = name;
-    row.innerHTML = `
-      <input type="checkbox" class="pick">
-      <span class="status-dot"></span>
-      <label>${name}</label>
-    `;
-    list.appendChild(row);
-  });
-}
-renderList();
+    /* ===== FILTER OUT BAD ROWS FIRST ===== */
+    data = data.filter(r =>
+      r.date &&
+      r.name &&
+      r.status &&
+      r.status !== "" &&
+      r.date !== "" &&
+      r.name !== ""
+    );
 
-function getCheckedRows() {
-  return [...document.querySelectorAll(".pick:checked")]
-    .map(cb => cb.closest(".card"));
-}
+    /* ===== Group by date ===== */
+    let byDate = {};
+    data.forEach(r => {
+      if (!byDate[r.date]) byDate[r.date] = [];
+      byDate[r.date].push(r);
+    });
 
-function updateSel() {
-  selCount.textContent =
-    document.querySelectorAll(".pick:checked").length + " selected";
-}
-
-list.addEventListener("change", updateSel);
-
-selectAll.onchange = () => {
-  let on = selectAll.checked;
-  document.querySelectorAll(".pick").forEach(cb => cb.checked = on);
-  updateSel();
-};
-
-markP.onclick = () => getCheckedRows().forEach(r => r.dataset.status="P");
-markA.onclick = () => getCheckedRows().forEach(r => r.dataset.status="A");
-markE.onclick = () => getCheckedRows().forEach(r => r.dataset.status="E");
-
-clearSel.onclick = () => {
-  document.querySelectorAll(".pick").forEach(cb => cb.checked=false);
-  updateSel();
-};
-
-/* ============================
-        TOAST
-============================ */
-function showToast(msg="Attendance recorded") {
-  toast.textContent = msg;
-  toast.classList.add("show");
-  setTimeout(()=>toast.classList.remove("show"),1500);
-}
-
-/* ============================================================
-       ⭐⭐ CORRECT WEDNESDAY LOGIC (NO MORE THURSDAY BUG) ⭐⭐
-=============================================================== */
-
-// Get most recent Wednesday (or today if Wed)
-function getCorrectWednesday() {
-  const today = new Date();
-  const day = today.getDay(); // Wed = 3
-
-  // If today is Wed → use today
-  if (day === 3) return today;
-
-  // Go backward X days to reach Wed
-  const diff = (day + 7 - 3) % 7;
-  const wed = new Date(today);
-  wed.setDate(today.getDate() - diff);
-  return wed;
-}
-
-// Format YYYY-MM-DD without timezone shift
-function toLocalYMD(d) {
-  const yyyy = d.getFullYear();
-  const mm = String(d.getMonth() + 1).padStart(2, "0");
-  const dd = String(d.getDate()).padStart(2, "0");
-  return `${yyyy}-${mm}-${dd}`;
-}
-
-// Set default: correct Wednesday
-const defaultWed = getCorrectWednesday();
-datePicker.value = toLocalYMD(defaultWed);
-
-// Validate on change
-datePicker.onchange = () => {
-  const d = new Date(datePicker.value);
-  if (d.getDay() !== 3) {
-    alert("Only Wednesdays are allowed.");
-    datePicker.value = toLocalYMD(getCorrectWednesday());
-  }
-};
-
-/* ============================
-     ⭐ EXCUSE ENTIRE DAY ⭐
-============================ */
-excuseDayBtn.onclick = async () => {
-  const date = datePicker.value;
-  if (!confirm(`Excuse EVERYONE on ${date}?`)) return;
-
-  await fetch(SCRIPT_URL, {
-    method:"POST",
-    mode:"no-cors",
-    body: JSON.stringify([{date, name:"ALL", status:"EXCUSED_DAY"}])
-  });
-
-  excuseMsg.style.display="block";
-  excuseMsg.textContent = `Everyone excused for ${date}`;
-  list.style.display="none";
-  submitBtn.disabled = true;
-
-  showToast("Excused day saved");
-};
-
-/* ============================
-   ⭐ IRREGULAR STUDENT FLAGS ⭐
-============================ */
-let history = [];
-
-async function loadHistory() {
-  let res = await fetch(SCRIPT_URL);
-  history = await res.json();
-  computeIrregularFlags();
-}
-
-function computeIrregularFlags() {
-  let byName = {};
-
-  history.forEach(r => {
-    if (r.status === "EXCUSED_DAY") return;
-    if (!byName[r.name]) byName[r.name] = [];
-    byName[r.name].push(r.status);
-  });
-
-  document.querySelectorAll(".card").forEach(card => {
-    let name = card.dataset.name;
-    let list = byName[name] || [];
-    let totalA = list.filter(s=>s==="A").length;
-
-    let streak = 0;
-    for (let i = list.length - 1; i >= 0; i--) {
-      if (list[i] === "A") streak++;
-      else break;
+    /* Apply search filter */
+    if (searchVal) {
+      Object.keys(byDate).forEach(date => {
+        byDate[date] = byDate[date].filter(r =>
+          r.name.toLowerCase().includes(searchVal) ||
+          r.date.includes(searchVal) ||
+          r.status.toLowerCase().includes(searchVal)
+        );
+      });
     }
 
-    card.classList.remove("irregular-yellow","irregular-red");
+    /* Summary counts */
+    let counts = {P:0, A:0, E:0};
 
-    if (totalA >= 5) {
-      card.classList.add("irregular-red");
-    } else if (streak >= 3) {
-      card.classList.add("irregular-yellow");
-    }
-  });
+    /* Irregular alert logic (same as Tracker) */
+    let historyByName = {};
+    data.forEach(r => {
+      if (!historyByName[r.name]) historyByName[r.name] = [];
+      historyByName[r.name].push(r.status);
+    });
+
+    let anyRows = false;
+
+    /* Render each date section */
+    Object.keys(byDate).sort().forEach(date => {
+      let rows = byDate[date];
+      if (rows.length === 0) return;
+
+      anyRows = true;
+
+      let section = document.createElement("div");
+
+      section.innerHTML += `<div class="date-header">${date}</div>`;
+
+      let tbl = `
+      <table>
+        <thead>
+          <tr>
+            <th>Timestamp</th>
+            <th>Name</th>
+            <th>Status</th>
+            <th>Alerts</th>
+          </tr>
+        </thead>
+        <tbody>
+      `;
+
+      rows.forEach(r => {
+        let alert = "";
+        let history = historyByName[r.name] || [];
+
+        let totalA = history.filter(s=>s==="A").length;
+
+        let streak = 0;
+        for (let i = history.length - 1; i >= 0; i--) {
+          if (history[i] === "A") streak++;
+          else break;
+        }
+
+        if (totalA >= 5) alert = `<span class="alert-red">🚨 5+ Absences</span>`;
+        else if (streak >= 3) alert = `<span class="alert-yellow">⚠️ 3 Absences in a Row</span>`;
+
+        if (r.status === "P") counts.P++;
+        if (r.status === "A") counts.A++;
+        if (r.status === "E") counts.E++;
+
+        tbl += `
+          <tr>
+            <td>${r.timestamp}</td>
+            <td>${r.name}</td>
+            <td class="status ${r.status}">${r.status}</td>
+            <td>${alert}</td>
+          </tr>
+        `;
+      });
+
+      tbl += `</tbody></table>`;
+      section.innerHTML += tbl;
+      container.appendChild(section);
+    });
+
+    if (!anyRows) noData.style.display="block";
+
+    summaryEl.textContent =
+      `Present: ${counts.P} | Absent: ${counts.A} | Excused: ${counts.E}`;
+
+  } catch(err) {
+    summaryEl.textContent = "Error loading data";
+    console.error(err);
+  }
 }
 
-loadHistory();
-
-/* ============================
-         SUBMIT
-============================ */
-submitBtn.onclick = async () => {
-  const date = datePicker.value;
-
-  const rows = [...document.querySelectorAll(".card")]
-    .filter(r => r.dataset.status)
-    .map(r => ({
-      date,
-      name: r.dataset.name,
-      status: r.dataset.status
-    }));
-
-  if (rows.length === 0) {
-    alert("No students marked.");
-    return;
-  }
-
-  await fetch(SCRIPT_URL, {
-    method: "POST",
-    mode: "no-cors",
-    body: JSON.stringify(rows)
-  });
-
-  showToast();
-  document.querySelectorAll(".card").forEach(r=>r.dataset.status="");
-  clearSel();
-  loadHistory();
-};
+loadData();
 </script>
 </body>
 </html>
+
 
