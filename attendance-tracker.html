@@ -1,65 +1,159 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>BLMS Science Olympiad — Attendance Tracker</title>
 
 <style>
-/* ---- BASE THEME (your original CSS preserved, shortened here for clarity) ---- */
-
+/* ------------------------------------------------------
+   BASE PAGE SETUP (CENTER EVERYTHING)
+------------------------------------------------------- */
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI",
+               Roboto, Arial, sans-serif;
+
   background: linear-gradient(135deg, #e9f0ff, #f7f8ff);
   margin: 0;
-  padding: 70px 36px 36px;
-  color: #111;
+  padding-top: 120px;          /* space for nav */
+  padding-bottom: 40px;
+
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex-direction: column;
 }
 
-/* NAV */
+/* ------------------------------------------------------
+   NAV BAR
+------------------------------------------------------- */
 .nav {
-  position: fixed; top: 18px; left: 20px; z-index: 100;
-  display: flex; gap: 14px;
+  position: fixed;
+  top: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+
+  display: flex;
+  gap: 14px;
   padding: 10px 16px;
-  background: rgba(255,255,255,0.25);
+
+  background: rgba(255, 255, 255, 0.25);
   backdrop-filter: blur(14px);
   border-radius: 999px;
-  border: 1px solid rgba(255,255,255,0.3);
+  border: 1px solid rgba(255, 255, 255, 0.3);
 }
+
 .nav a {
-  color: #111; font-weight: 600; text-decoration: none;
+  color: #111;
+  font-weight: 600;
+  text-decoration: none;
 }
+
 .nav a.active {
   background: linear-gradient(90deg, #007aff, #9b7bff);
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
   font-weight: 800;
 }
 
-/* Card grid */
-.grid {
+/* ------------------------------------------------------
+   MAIN CENTERED CONTAINER
+------------------------------------------------------- */
+.container {
+  width: 100%;
+  max-width: 1000px;
+
+  margin-left: auto;
+  margin-right: auto;
+
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 20px;
+  padding: 32px 36px;
+
+  box-shadow: 0 10px 26px rgba(0,0,0,.15);
+
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* ------------------------------------------------------
+   TOOLBAR
+------------------------------------------------------- */
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
   margin-top: 10px;
+}
+
+.toolbar input[type="date"] {
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+}
+
+/* Shared button style */
+.btn {
+  padding: 10px 18px;
+  border-radius: 12px;
+  border: none;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-green { background: #10b981; }
+.btn-red   { background: #ef4444; }
+.btn-yellow{ background: #f59e0b; }
+.btn-gray  { background: #6b7280; }
+.btn-blue  { background: #6366f1; }
+.btn-purple{ background: #9b7bff; }
+
+/* ------------------------------------------------------
+   STUDENT GRID
+------------------------------------------------------- */
+.grid {
+  margin-top: 16px;
   display: grid;
-  grid-template-columns: repeat(auto-fill,minmax(260px,1fr));
-  gap: 10px;
+  grid-template-columns: repeat(auto-fill, minmax(285px, 1fr));
+  gap: 12px;
+
+  width: 100%;
+  max-width: 900px;
+
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .card {
-  display: flex; align-items: center; gap: 10px;
-  border: 1px solid rgba(0,0,0,.1);
-  border-radius: 12px; padding: 10px 12px;
-  background: rgba(255,255,255,.55);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  border: 1px solid rgba(0, 0, 0, 0.10);
+  border-radius: 12px;
+  padding: 10px 14px;
+  background: rgba(255,255,255,0.55);
 }
 
 /* Status dot */
 .status-dot {
-  width: 10px; height: 10px; border-radius: 50%;
-  background: #d1d5db; border: 1px solid rgba(0,0,0,.12);
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #d1d5db;
+  border: 1px solid rgba(0,0,0,0.15);
 }
 .card[data-status="P"] .status-dot { background: #10b981; }
 .card[data-status="A"] .status-dot { background: #ef4444; }
 .card[data-status="E"] .status-dot { background: #f59e0b; }
 
-/* Irregular flags */
+/* ------------------------------------------------------
+   FLAGGED STUDENTS
+------------------------------------------------------- */
 .irregular-yellow {
   border: 2px solid #facc15 !important;
   box-shadow: 0 0 10px rgba(250,204,21,0.6);
@@ -69,29 +163,42 @@ body {
   box-shadow: 0 0 12px rgba(239,68,68,0.7);
 }
 
-/* Toast */
+/* ------------------------------------------------------
+   TOAST
+------------------------------------------------------- */
 .toast {
-  position: fixed; left: 50%; transform: translateX(-50%);
-  bottom: 22px; padding: 10px 16px; border-radius: 10px;
-  background: #10b981; color: white; opacity: 0;
-  pointer-events: none; transition: opacity .35s ease;
+  position: fixed;
+  left: 50%; transform: translateX(-50%);
+  bottom: 22px;
+  padding: 10px 16px;
+  border-radius: 10px;
+  background: #10b981;
+  color: white;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .35s ease;
 }
 .toast.show { opacity: 1; }
 
-/* Container */
-.container {
-  width: min(920px,96vw);
-  background: rgba(255,255,255,.7);
-  border-radius: 20px;
-  padding: 24px 28px;
-  box-shadow: 0 10px 26px rgba(0,0,0,.18);
+/* ------------------------------------------------------
+   RESPONSIVE FIXES
+------------------------------------------------------- */
+@media (max-width: 700px) {
+  .container {
+    padding: 20px 18px;
+  }
+  .grid {
+    grid-template-columns: 1fr;
+  }
 }
 </style>
 </head>
 
 <body>
 
-<!-- === NAVIGATION BAR === -->
+<!-- ======================================================
+     NAVIGATION
+====================================================== -->
 <nav class="nav">
   <a href="index.html" data-page="index">🏠 Home</a>
   <a href="roster.html" data-page="roster">👥 Team Roster</a>
@@ -99,66 +206,66 @@ body {
   <a href="attendance-report.html" data-page="attendance-report">📊 Attendance Report</a>
 </nav>
 
-<button class="toggle" id="themeToggle">☀️ Light / 🌙 Dark</button>
-
-<!-- === LOGIN OVERLAY === -->
+<!-- ======================================================
+     LOGIN OVERLAY
+====================================================== -->
 <div id="loginOverlay" style="
   position: fixed; inset:0;
-  background: rgba(0,0,0,.8); backdrop-filter: blur(8px);
-  display:flex; align-items:center; justify-content:center; z-index:9999;">
-  <div class="login" style="
-    width:min(420px,92vw); background:#fff; border-radius:18px; padding:28px;
-    box-shadow:0 12px 32px rgba(0,0,0,.5); text-align:center;">
-    <h2 style="color:#007aff; margin-bottom:10px;">Teacher Access</h2>
-    <input type="password" id="pw" placeholder="Enter password" />
-    <button class="btn" id="loginBtn"
-      style="background:#6366f1; color:white; padding:10px 18px; border-radius:12px; margin-top:10px;">
-      Login
-    </button>
-    <div id="loginErr" style="color:#ef4444; height:20px; margin-top:10px;"></div>
+  background: rgba(0,0,0,.8);
+  display:flex; align-items:center; justify-content:center;
+  z-index:9999;">
+  <div style="
+    background:white; padding:28px; border-radius:18px;
+    width:min(420px,92vw); text-align:center;">
+    <h2 style="color:#007aff">Teacher Access</h2>
+    <input id="pw" type="password"
+      placeholder="Enter password"
+      style="width:100%; padding:11px 14px; margin-top:12px; border-radius:10px;">
+    <button id="loginBtn" class="btn btn-blue" style="margin-top:14px;">Login</button>
+    <div id="loginErr" style="color:#ef4444; margin-top:8px; height:18px;"></div>
   </div>
 </div>
 
-<!-- === MAIN APP === -->
+<!-- ======================================================
+     MAIN ATTENDANCE APP
+====================================================== -->
 <div class="container" id="app" style="display:none;">
+
   <h1 style="
-    text-align:center; margin-bottom:14px;
-    background:linear-gradient(90deg,#007aff,#9b7bff);
-    -webkit-background-clip:text; -webkit-text-fill-color:transparent;">
+      text-align:center;
+      margin-bottom:14px;
+      background:linear-gradient(90deg,#007aff,#9b7bff);
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;">
     Attendance — BLMS Science Olympiad
   </h1>
 
   <!-- Toolbar -->
-  <div class="toolbar" style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center;">
-    <label>Date:
-      <input type="date" id="datePicker"
-        style="padding:10px 14px; border-radius:10px; border:1px solid #ccc;">
+  <div class="toolbar">
+    <label>
+      Date:
+      <input type="date" id="datePicker">
     </label>
 
-    <button id="markP" class="btn"
-      style="background:#10b981; color:white; padding:10px 18px;">Present</button>
-    <button id="markA" class="btn"
-      style="background:#ef4444; color:white; padding:10px 18px;">Absent</button>
-    <button id="markE" class="btn"
-      style="background:#f59e0b; color:white; padding:10px 18px;">Excused</button>
+    <button id="markP" class="btn btn-green">Present</button>
+    <button id="markA" class="btn btn-red">Absent</button>
+    <button id="markE" class="btn btn-yellow">Excused</button>
 
-    <button id="clearSel" class="btn secondary"
-      style="background:#6b7280; color:white; padding:10px 18px;">Clear</button>
+    <button id="clearSel" class="btn btn-gray">Clear</button>
 
-    <button id="submitBtn" class="btn info"
-      style="background:#6366f1; color:white; padding:10px 18px;">Submit</button>
+    <button id="submitBtn" class="btn btn-blue">Submit</button>
 
-    <!-- ⭐ NEW -->
-    <button id="excuseDayBtn" class="btn"
-      style="background:#9b7bff; color:white; padding:10px 18px;">Excuse Entire Day</button>
+    <button id="excuseDayBtn" class="btn btn-purple">Excuse Entire Day</button>
   </div>
 
-  <!-- Excuse Message -->
-  <p id="excuseMsg" style="display:none; text-align:center; color:#007aff; font-weight:700; margin-top:10px;"></p>
+  <p id="excuseMsg"
+     style="display:none; text-align:center; color:#007aff; font-weight:700; margin-top:10px;">
+  </p>
 
-  <div class="helpers" style="display:flex; gap:10px; justify-content:center; margin:10px 0;">
-    <label style="display:flex; align-items:center; gap:5px;">
-      <input type="checkbox" id="selectAll"> Select all
+  <div style="display:flex; justify-content:center; gap:10px; margin:10px 0;">
+    <label style="display:flex; align-items:center; gap:6px;">
+      <input type="checkbox" id="selectAll">
+      Select all
     </label>
     <span id="selCount">0 selected</span>
   </div>
@@ -168,11 +275,15 @@ body {
 
 <div class="toast" id="toast">Attendance recorded</div>
 
+<!-- ======================================================
+     JAVASCRIPT SECTION (YOUR FEATURES)
+====================================================== -->
 <script>
-/* CONFIG */
+/* ==========================================================
+   CONFIG
+========================================================== */
 const SCRIPT_URL =
   "https://script.google.com/macros/s/AKfycbyoBlmpsgE_IhSnuH5ao9LgNzOtwkmqnbupyFno04QUN01Pcuk30eX09xIs1GlklTDi/exec";
-
 const TEACHER_PASSWORD = "Science123";
 
 const students = [
@@ -185,7 +296,9 @@ const students = [
   "Ishaan Parthasarathy","Aarav Singhai"
 ];
 
-/* === LOGIN === */
+/* ==========================================================
+   LOGIN
+========================================================== */
 loginBtn.onclick = () => {
   if (pw.value === TEACHER_PASSWORD) {
     sessionStorage.setItem("att_ok","1");
@@ -193,31 +306,37 @@ loginBtn.onclick = () => {
     app.style.display="block";
   } else loginErr.textContent = "Incorrect password.";
 };
+
 if (sessionStorage.getItem("att_ok") === "1") {
   loginOverlay.style.display="none";
   app.style.display="block";
 }
 
-/* === RENDER STUDENTS === */
+/* ==========================================================
+   RENDER STUDENTS
+========================================================== */
 function renderList() {
   list.innerHTML = "";
   students.forEach(name => {
-    let row = document.createElement("div");
+    const row = document.createElement("div");
     row.className = "card";
     row.dataset.name = name;
+
     row.innerHTML = `
       <input type="checkbox" class="pick">
       <span class="status-dot"></span>
       <label>${name}</label>
     `;
+
     list.appendChild(row);
   });
 }
 renderList();
 
+/* Helpers */
 function getCheckedRows() {
   return [...document.querySelectorAll(".pick:checked")]
-    .map(cb => cb.closest(".card"));
+         .map(cb => cb.closest(".card"));
 }
 
 function updateSel() {
@@ -227,11 +346,13 @@ function updateSel() {
 list.addEventListener("change", updateSel);
 
 selectAll.onchange = () => {
-  let on = selectAll.checked;
-  document.querySelectorAll(".pick").forEach(cb => cb.checked = on);
+  [...document.querySelectorAll(".pick")].forEach(cb =>
+    cb.checked = selectAll.checked
+  );
   updateSel();
 };
 
+/* Marking */
 markP.onclick = () => getCheckedRows().forEach(r => r.dataset.status="P");
 markA.onclick = () => getCheckedRows().forEach(r => r.dataset.status="A");
 markE.onclick = () => getCheckedRows().forEach(r => r.dataset.status="E");
@@ -241,14 +362,18 @@ clearSel.onclick = () => {
   updateSel();
 };
 
-/* === TOAST === */
+/* ==========================================================
+   TOAST
+========================================================== */
 function showToast(msg="Attendance recorded") {
   toast.textContent = msg;
   toast.classList.add("show");
   setTimeout(()=>toast.classList.remove("show"),1500);
 }
 
-/* === ⭐ WEDNESDAY ONLY LOGIC === */
+/* ==========================================================
+   WEDNESDAY ONLY LOGIC
+========================================================== */
 function getWednesday(d) {
   let date = new Date(d);
   let day = date.getDay(); // 0=Sun ... 3=Wed
@@ -262,16 +387,18 @@ let thisWed = getWednesday(today);
 datePicker.value = thisWed.toISOString().split("T")[0];
 
 datePicker.onchange = () => {
-  let d = new Date(datePicker.value);
+  const d = new Date(datePicker.value);
   if (d.getDay() !== 3) {
     alert("Only Wednesdays allowed.");
     datePicker.value = getWednesday(d).toISOString().split("T")[0];
   }
 };
 
-/* === ⭐ EXCUSE ENTIRE DAY === */
+/* ==========================================================
+   EXCUSE ENTIRE DAY
+========================================================== */
 excuseDayBtn.onclick = async () => {
-  let date = datePicker.value;
+  const date = datePicker.value;
   if (!confirm(`Excuse EVERYONE on ${date}?`)) return;
 
   await fetch(SCRIPT_URL, {
@@ -288,7 +415,9 @@ excuseDayBtn.onclick = async () => {
   showToast("Excused Day Saved");
 };
 
-/* === ⭐ LOAD HISTORY TO FLAG IRREGULAR STUDENTS === */
+/* ==========================================================
+   IRREGULAR STUDENT FLAGS
+========================================================== */
 let history = [];
 
 async function loadHistory() {
@@ -307,12 +436,12 @@ function computeIrregularFlags() {
   });
 
   document.querySelectorAll(".card").forEach(card => {
-    let name = card.dataset.name;
-    let list = byName[name] || [];
+    const name = card.dataset.name;
+    const list = byName[name] || [];
 
-    let totalA = list.filter(s=>s==="A").length;
+    const totalA = list.filter(s => s==="A").length;
+
     let streak = 0;
-
     for (let i=list.length-1; i>=0; i--) {
       if (list[i] === "A") streak++;
       else break;
@@ -320,21 +449,19 @@ function computeIrregularFlags() {
 
     card.classList.remove("irregular-yellow","irregular-red");
 
-    if (totalA >= 5) {
-      card.classList.add("irregular-red");
-    } else if (streak >= 3) {
-      card.classList.add("irregular-yellow");
-    }
+    if (totalA >= 5) card.classList.add("irregular-red");
+    else if (streak >= 3) card.classList.add("irregular-yellow");
   });
 }
-
 loadHistory();
 
-/* === SUBMIT === */
+/* ==========================================================
+   SUBMIT ATTENDANCE
+========================================================== */
 submitBtn.onclick = async () => {
-  let date = datePicker.value;
+  const date = datePicker.value;
 
-  let rows = [...document.querySelectorAll(".card")]
+  const rows = [...document.querySelectorAll(".card")]
     .filter(r => r.dataset.status)
     .map(r => ({
       date,
@@ -354,7 +481,8 @@ submitBtn.onclick = async () => {
   });
 
   showToast();
-  document.querySelectorAll(".card").forEach(r=>r.dataset.status="");
+
+  document.querySelectorAll(".card").forEach(r => r.dataset.status="");
   clearSel();
   loadHistory();
 };
