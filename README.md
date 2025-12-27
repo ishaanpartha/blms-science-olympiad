@@ -1,3 +1,3 @@
 # BLMS Science Olympiad — Division B 
 
-Just trust...
+(https://ishaanpartha.github.io/blms-science-olympiad/)
